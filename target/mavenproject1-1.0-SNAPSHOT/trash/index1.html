@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+
+<table>
+    <tr>
+        <td colspan="2">
+            <input type="text" id="username" placeholder="Username"/>
+            <button type="button" onclick="connect();" >Connect</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <textarea readonly="true" rows="10" cols="80" id="log"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" size="51" id="msg" placeholder="Message"/>
+            <button type="button" onclick="send();" >Send</button>
+        </td>
+    </tr>
+</table>
+</body>
+
+<!--<script src="websocket.js"></script> -->
+<script>
+var ws;
+
+function connect() {
+    
+    var username = document.getElementById("username").value;
+    ws = new WebSocket("ws://localhost:8081/mavenproject1/chatRoomServer/"+username);
+    ws.onmessage = function(event) {
+        var log = document.getElementById("log");
+        console.log(event.data);
+        var message = JSON.parse(event.data);
+        log.innerHTML += message.from + " : " + message.content + "\n";
+    };
+}
+
+function send() {
+    var content = document.getElementById("msg").value;
+    var json = JSON.stringify({
+        "content":content
+    });
+
+    ws.send(json);
+}
+</script>
+
+</html>
